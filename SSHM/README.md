@@ -1,34 +1,19 @@
+# Hardware Monitor (Revamp)
 
-# Simple Hardware Monitor (GUI)
+This is a revamp of the original Tkinter hardware monitor.
 
-A lightweight, cross‑platform hardware monitor written in Python with Tkinter. It shows:
-- CPU overall and per‑core usage (and frequency)
-- RAM and swap usage
-- NVIDIA GPU stats (utilization, memory, temperature) if drivers + NVML are present
-- Disk usage per mount and per‑second read/write
-- Network throughput per interface
+## What was fixed/improved
 
-## Quick start (Windows — easiest)
-1. **Install Python 3.10+** from python.org (check "Add Python to PATH").
-2. Double‑click `start_windows.bat`. It will install requirements (first run only) and start the app.
-   - If Windows warns about running a script, click **More info → Run anyway** (you can open it in Notepad to inspect).
+- **CPU name**: shows the real CPU model string (Windows registry / macOS sysctl / Linux /proc/cpuinfo) instead of `Intel64 Family ...`.
+- **CPU usage accuracy**: avoids back-to-back `psutil.cpu_percent()` calls that break sampling; CPU sampling is primed once, then updated on a stable interval.
+- **UI performance**: disk + network rows are **updated in place** (no destroy/recreate every refresh), which removes the stutter.
+- **No UI blocking**: hardware polling runs in a **background thread**; Tk mainloop only renders.
 
-## macOS
-1. Install Python 3.10+ (e.g., via python.org or Homebrew).
-2. Open Terminal and run: `chmod +x start_mac.command`, then **double‑click** it in Finder.
-   - The first run installs requirements, later runs skip that.
+## Run (Windows)
 
-## Linux
-1. Make sure Python 3.10+ and pip are installed.
-2. Run `chmod +x start_linux.sh` once, then double‑click it (depending on your file manager) or run `./start_linux.sh`.
+1. Install Python 3.10+
+2. Double-click `start_windows.bat`
 
 ## Notes
-- **NVIDIA GPU metrics** require NVIDIA drivers and NVML (provided with drivers). If not available, the GPU section will say so gracefully.
-- This app uses only Tkinter (bundled with Python), `psutil`, and `pynvml`. No CLI knowledge needed—use the start scripts.
-- You can also open the folder in VS Code and press the **Run** button on `app.py` if you prefer.
 
-## Uninstall
-Delete the folder. To remove the packages from your system Python, you can uninstall with:
-```
-pip uninstall psutil pynvml
-```
+- NVIDIA GPU stats require NVIDIA drivers (NVML comes with the driver). If NVML isn't available, the GPU card will show a clear message.
